@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"net/http"
+
 	"github.com/Sirupsen/logrus"
 	"github.com/dylanmacdonald/shorten/service"
 	"github.com/gorilla/handlers"
@@ -16,7 +18,11 @@ func InitHandlers(logger logrus.FieldLogger, s service.Service) *mux.Router {
 	r.Handle("/shorten", handlers.MethodHandler{
 		"GET": shortener,
 	})
-
+	r.Handle("/health", handlers.MethodHandler{
+		"GET": http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusOK)
+		}),
+	})
 	r.PathPrefix("/").Handler(redirect)
 
 	return r
